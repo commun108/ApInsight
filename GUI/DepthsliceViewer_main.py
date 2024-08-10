@@ -1,20 +1,22 @@
 """GUI libraries"""
-from GUI.RightFrame import RightFrame
-from GUI.MeasurementTool import MeasurementWindow
-from GUI.LeftFrame import LeftFrame
-from GUI.ImageFrame import ImageFrame
-from GUI.error_handling import show_error_dialog
-from GUI.EditProjectFile import start_projectGUI
-from data.ProjectData import ProjectData
-from config_manager import ConfigurationManager
 import json
 import platform
 import tkinter as tk
 import webbrowser
 from tkinter import (END, Button, Frame, Menu, PanedWindow, PhotoImage, Text,
-                     Toplevel, filedialog, messagebox)
+                     Toplevel, filedialog, messagebox, ttk)
 
+import matplotlib.pyplot as plt
+from config_manager import ConfigurationManager
+from data.ProjectData import ProjectData
 from screeninfo import get_monitors
+
+from GUI.EditProjectFile import start_projectGUI
+from GUI.error_handling import show_error_dialog
+from GUI.ImageFrame import ImageFrame
+from GUI.LeftFrame import LeftFrame
+from GUI.MeasurementTool import MeasurementWindow
+from GUI.RightFrame import RightFrame
 
 """imports from own scripts:"""
 
@@ -451,9 +453,15 @@ class TopFrame(Frame):
             self, text="Measure Tool", command=self.measure, state='disabled')
         self.measure_tool.pack(side='left', padx=5, pady=5)
 
-        self.cmap_selector = tk.ComboBox(self,
-                                         state='readonly',
-                                         values=['Greys', 'jet', 'viridis'])
+        # get all available pyplot colormap ids
+        cmap_ids = plt.colormaps()
+
+        self.cmap_selector = ttk.Combobox(self,
+                                          state='readonly',
+                                          values=cmap_ids)
+        # number 15 is Greys and is set to default
+        self.cmap_selector.current(15)
+        self.current_cmap = cmap_ids[15]
         self.cmap_selector.pack(side='left', padx=5, pady=5)
 
     def zoom_to_full_extent(self):
